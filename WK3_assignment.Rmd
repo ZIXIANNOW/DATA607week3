@@ -1,0 +1,128 @@
+---
+title: "Week 3 assignment"
+author: "ZIXIAN LIANG"
+date: "2024-02-10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+1.Please deliver links to an R Markdown file (in GitHub and rpubs.com) with solutions to the problems below.  You may work in a small group, but please submit separately with names of all group participants in your submission.
+1. Using the 173 majors listed in fivethirtyeight.com’s College Majors dataset [https://fivethirtyeight.com/features/the-economic-guide-to-picking-a-college-major/], provide code that identifies the majors that contain either "DATA" or "STATISTICS"
+
+```{r}
+library(tidyverse)
+```
+
+Data Acquisition
+Input file:"all-ages.csv" from https://github.com/fivethirtyeight/data/tree/master/college-majors
+
+
+```{r}
+url <- 'https://raw.githubusercontent.com/fivethirtyeight/data/master/college-majors/all-ages.csv'
+database <- read_csv(url)
+database
+```
+
+
+Then we can look up rows containing key words.
+
+
+```{r}
+majors_containing_data_or_statistics <- database[grep("DATA|STATISTICS", database$Major),]
+majors_containing_data_or_statistics
+```
+
+2.PLEASE SEE HINT/CLARIFICATION AFTER #4 BELOW. Write code that transforms the data below:
+[1] "bell pepper"  "bilberry"     "blackberry"   "blood orange"
+[5] "blueberry"    "cantaloupe"   "chili pepper" "cloudberry"  
+[9] "elderberry"   "lime"         "lychee"       "mulberry"    
+[13] "olive"        "salal berry"
+Into a format like this:
+c("bell pepper", "bilberry", "blackberry", "blood orange", "blueberry", "cantaloupe", "chili pepper", "cloudberry", "elderberry", "lime", "lychee", "mulberry", "olive", "salal berry")
+The two exercises below are taken from R for Data Science, 14.3.5.1 in the on-line version:
+
+--------
+
+First create dataframe.
+
+```{r}
+fruit <- c("bell pepper", "bilberry", "blackberry", "blood orange",
+          "blueberry", "cantaloupe", "chili pepper", "cloudberry",
+          "elderberry", "lime", "lychee", "mulberry",
+          "olive", "salal berry")
+fruit
+```
+
+Once we have dataframe fruit available, then we can use "Paste()" to concatenate.
+
+
+```{r}
+strOut  <- paste("c(", paste0("\"", fruit, "\"", collapse = ", "), ")", collapse = "")
+str_view(strOut)
+```
+3.Describe, in words, what these expressions will match:
+
+1-(.)\1\1
+
+(.) means a single letter, \1 means repeating first letter, so \1\1 means repeating twice
+
+Example "a" in (.)\1\1 format is "aaa";
+
+2-"(.)(.)\\2\\1"
+
+Similar like above, \2 means repeating second letter
+
+Example "ab" in (.)(.)\\2\\1 format is "abba";
+
+3-(..)\1
+
+These parentheses contain two ".", so it check any pairs of letters
+
+Example "ab" in (..)\1 format is "abab";
+
+
+4-"(.).\\1.\\1"
+
+"." letter inside parentheses will be the same with \1, "." letter without parentheses can be anything.
+
+Example a,b,c is "(a)b1c1" in (.).\\1.\\1 format is "abaca";
+
+
+5-"(.)(.)(.).*\\3\\2\\1"
+
+New thing in here is ".*", this can be nothing or any lengths of letters
+
+Example "abc" in (.)(.)(.).*\\3\\2\\1 format is "abccba";
+
+Example "abc123" in (.)(.)(.).*\\3\\2\\1 format is "abc123cba";
+
+4.Construct regular expressions to match words that:
+
+```{r}
+sample_use <- c("civic", "abab", "transmission")
+sample_use
+```
+
+
+Start and end with the same character.
+
+```{r}
+str_view(sample_use, "^(.).*\\1$")
+```
+
+Contain a repeated pair of letters (e.g. "church" contains "ch" repeated twice.)
+
+```{r}
+str_view(sample_use, "(.)(.).*\\1\\2")
+```
+
+Contain one letter repeated in at least three places (e.g. "eleven" contains three "e"s.)
+
+```{r}
+str_view(sample_use, "(.).*\\1.*\\1")
+```
+
